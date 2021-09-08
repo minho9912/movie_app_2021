@@ -1,5 +1,4 @@
 import React from "react";
-import Potato from "./potato";
 function App() {
   return (
     <div className="App">
@@ -8,5 +7,7 @@ function App() {
     </div>
   );
 }
-
+function Potato() {
+  return <h3>I love potato</h3>;
+}
 export default App;
