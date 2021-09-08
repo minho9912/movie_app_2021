@@ -59,11 +59,12 @@ export default App;
 
 [9월 1일]
 학습내용
-기능|명령어
---|--
-choco로 node설치 | choco install nodejs-lts
-node 버전확인 | node -v
-npx 버전확인 | npx -v
+
+| 기능             | 명령어                   |
+| ---------------- | ------------------------ |
+| choco로 node설치 | choco install nodejs-lts |
+| node 버전확인    | node -v                  |
+| npx 버전확인     | npx -v                   |
 
 1.React Developer Tools
 
