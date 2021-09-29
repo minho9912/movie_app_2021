@@ -1,33 +1,39 @@
-import React from "react";
+import React, { Component } from "react";
 
-const foodLike = [
-  {
-    name: "chikin",
-    image: "https://health.chosun.com/site/data/img_dir/2021/03/31/2021033102448_0.jpg",
-  },
-  {
-    name: "ham",
-    image: "https://imagesm.cj.net/images/brand/spam/img_cont1.png",
-  },
-];
-function App() {
-  return (
-    <div className="App">
-      <h1>Hello React!!!!</h1>
-      {foodLike.map(renderFood)}
-    </div>
-  );
-}
-function renderFood(dish) {
-  return <Food name={dish.name} picture={dish.image} />;
-}
-function Food({ name, picture }) {
-  return (
-    <div>
-      <h3>I love {name}</h3>
-      <img src={picture}></img>
-    </div>
-  );
+class App extends Component {
+  constructor(props) {
+    super(props);
+    console.log("constructor");
+  }
+  state = {
+    count: 0,
+  };
+  add = () => {
+    console.log("add");
+    this.setState(current => ({ count: this.state.count + 1 }));
+  };
+  minus = () => {
+    console.log("minus");
+    this.setState(current => ({ count: this.state.count - 1 }));
+  };
+
+  componentDidMount() {
+    console.log("componentDidMount");
+  }
+
+  componentDidUpdate() {
+    console.log("componentDidUpdate");
+  }
+  render() {
+    console.log("render");
+    return (
+      <div>
+        <h1>The number is: {this.state.count}</h1>
+        <button onClick={this.add}>add</button>
+        <button onClick={this.minus}>minus</button>
+      </div>
+    );
+  }
 }
 
 export default App;

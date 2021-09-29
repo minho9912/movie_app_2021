@@ -1,5 +1,109 @@
 # 최민호 201840135
 
+## [9월 29일]
+
+```jsx
+// +,- 기능 만들기
+  state = {
+    count: 0,
+  };
+  //add 함수, setState속성으로 this키워드를 함께 사용해서 state.count객체의 값을 증가시킴
+  add = () => {
+    console.log("add");
+    this.setState(current => ({ count: this.state.count + 1 }));
+  };
+  //minus 함수, setState속성으로 this키워드를 함께 사용해서 state.count객체의 값을 감소시킴
+  minus = () => {
+    console.log("minus");
+    this.setState(current => ({ count: this.state.count - 1 }));
+  };
+  render() {
+    console.log("render");
+    return (
+      <div>
+        <h1>The number is: {this.state.count}</h1>
+        <button onClick={this.add}>add</button>
+        <button onClick={this.minus}>minus</button>
+      </div>
+    );
+  }
+```
+
+```jsx
+//state 값 선언 및 props 상속
+class App extends Component {
+  constructor(props) {
+    super(props);
+    console.log("constructor");
+  }
+  state = {
+    count: 0,
+  };
+}
+```
+
+```jsx
+//state 기본 문법
+import React, { Component } from "react";
+class App extends Component {
+  render() {
+    return (
+      <div>
+        <h1>class</h1>
+      </div>
+    );
+  }
+}
+```
+
+```jsx
+Food.propTypes = {
+  name: PropTypes.string.isRequired,
+  picture: PropTypes.string.isRequired,
+  rating: PropTypes.number,
+};
+```
+
+| git proptypes |                              |
+| ------------- | ---------------------------- |
+| 명령어        | npm i prop-types             |
+| 기능          | props값이 알맞은 형인지 검사 |
+
+<h3>image 사용방법</h3>
+<ul>
+<li>react프로젝트의 public/images폴더에 사진을 넣고
+App.js에서 불러올 때는 같은 경로에 있는 것처럼 불러올 수 있다.</li>
+</ul>
+
+```jsx
+function App() {
+  return (
+    <div className="App">
+      <h1>Hello React!!!!</h1>
+      {foodLike.map(renderFood)}
+      {// 이전 문법}
+      {foodLike.map(dish => (
+        <Food name={dish.name} picture={dish.image} />
+      ))}
+      {//}
+    </div>
+  );
+}
+function renderFood(dish) {
+  return <Food name={dish.name} picture={dish.image} />;
+}
+```
+
+| git 폴더 불러오기 |                    |
+| ----------------- | ------------------ |
+| 명령어            | git clone '깃주소' |
+
+<h3>branch를 main으로 바꾸기</h3>
+<ul>
+<li>git config init.defaultBranch main</li>
+<li>git branch -m master main</li>
+</ul>
+
 ## [9월 15일]
 
 ```jsx
