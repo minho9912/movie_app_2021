@@ -1,5 +1,129 @@
 # 최민호 201840135
 
+## [10월 6일]
+
+```jsx
+import axios from "axios";
+import React from "react";
+
+class App07 extends React.Component {
+  state = {
+    isLoading: true,
+    movie: [],
+  };
+  //비동기식, setTimeout을 쓸필요없이 async, await을 사용해주면 데이터가 로딩이
+  //끝날 때까지 기다리고 DidMount가 호출된다.
+  getMovie = async () => {
+    //movies.data.data.movies
+    const {
+      data: {
+        data: { movies },
+      },
+    } = await axios.get("https://yts-proxy.now.sh/list_movies.json");
+    //변수이름이 동일한게 있다면 알아서 인식한다.
+    this.setState({ movies, isLoading: false });
+  };
+
+  componentDidMount() {
+    this.getMovie();
+  }
+
+  render() {
+    const { isLoading } = this.state;
+    return <div>{isLoading ? "Loading" : "영화 데이터 출력"}</div>;
+  }
+}
+
+export default App07;
+```
+
+```jsx
+class App07 extends React.Component {
+  state = {
+    isLoading: true,
+    movie: [],
+  };
+
+  getMovie = async () => {
+    const movies = await axios.get("https://yts-proxy.now.sh/list_movies.json");
+  };
+
+  componentDidMount() {
+    this.getMovie();
+  }
+
+  render() {
+    const { isLoading } = this.state;
+    return <div>{isLoading ? "Loading" : "영화 데이터 출력"}</div>;
+  }
+}
+```
+
+```jsx
+class App06 extends React.Component {
+  state = {
+    isLoading: true,
+  };
+  componentDidMount() {
+    setTimeout(() => {
+      this.setState({ isLoading: false });
+    }, 5000);
+  }
+  //isLoading이 true면 Loading, 5초후 false로 바뀌면 we are ready
+  render() {
+    const { isLoading } = this.state;
+    return <div>{isLoading ? "Loading" : "We are ready"}</div>;
+  }
+}
+```
+
+```jsx
+import React, { Component } from "react";
+
+class App extends Component {
+  constructor(props) {
+    super(props);
+    console.log("constructor");
+  }
+  state = {
+    count: 0,
+  };
+  add = () => {
+    console.log("add");
+    this.setState(current => ({ count: this.state.count + 1 }));
+  };
+
+  componentDidUpdate() {
+    console.log("componentDidUpdate");
+  }
+  //업데이트 될 때마다 호출된다
+  render() {
+    console.log("render");
+    return (
+      <div>
+        <h1>The number is: {this.state.count}</h1>
+        <button onClick={this.add}>add</button>
+      </div>
+    );
+  }
+}
+
+export default App;
+```
+
+<h3>생성자란?</h3>
+<table border=1>
+<tr>
+<td>constructor()는 Component를 생성할 때 state 값을 초기화하거나 메서드를 바인딩할 때 사용한다.</td>
+</tr>
+<tr>
+<td>자바스크립트에서 super는 부모클래스 생성자의 참조한다는 의미이다.</td>
+</tr>
+<tr>
+<td>React에서는 버전17부터 componentWillMount()를 사용하지 않는다.</td>
+</tr>
+
+</table>
 ## [9월 29일]
 
 ```jsx
