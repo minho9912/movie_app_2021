@@ -44,4 +44,4 @@ function Food({ name, picture, alt, rating }) {
   );
 }
 
-export default App;
+// export default App;
