@@ -1,5 +1,146 @@
 # 최민호 201840135
 
+## [10월 13일]
+
+```jsx
+//영화 장르 출력하기
+function Movie({ id, year, title, summary, poster, genres }) {
+  return (
+    <div className="movie">
+      <img src={poster} alt={title} title={title} />
+      <div className="movie-data">
+        <h3 className="movie-title">{title}</h3>
+        <h5 className="movie-year">{year}</h5>
+        <ul className="movie-genres">
+          {genres.map(genre => {
+            //genres값으로 받아온 것을 map함수를 사용해 li태그로 출력한다.
+            return <li>{genre}</li>;
+          })}
+        </ul>
+        <p className="movie-summary">{summary}</p>
+      </div>
+    </div>
+  );
+}
+```
+
+```jsx
+//Moive.js의 일부분
+Movie.propTypes = {
+  //각 속성에대한 조건이다, 숫자인지, 문자인지
+  year: PropTypes.number.isRequired,
+  title: PropTypes.string.isRequired,
+  summary: PropTypes.string.isRequired,
+  poster: PropTypes.string.isRequired,
+  genres: PropTypes.arrayOf(PropTypes.string).isRequired,
+};
+```
+
+```jsx
+function Movie({ id, year, title, summary, poster }) {
+  return (
+    //css적용을 위해 Movie컴포넌트의 prop값을 div,h3등 html태그에 클래스로 묶어준다.
+    <div class="movie">
+      <img src={poster} alt={title} title={title} />
+      <div class="movie-data">
+        <h3 class="movie-title">{title}</h3>
+        <h5 class="movie-year">{year}</h5>
+        <p class="movie-summary">{summary}</p>
+      </div>
+    </div>
+  );
+}
+```
+
+```jsx
+render() {
+    const { isLoading, movies } = this.state;
+    return (
+      <section class="container">
+        {isLoading ? (
+          <div class="loader">
+            <span class="loader-class">Loading...</span>
+          </div>
+        ) : (
+          <div class="movies">
+            {movies.map(movie => {
+              console.log(movie);
+              //Movie컴포넌트를 호출함과 동시에 movie객체의 값을 prop값으로 지정해준다
+              return (
+                <Movie
+                  key={movie.id}
+                  id={movie.id}
+                  year={movie.year}
+                  title={movie.title}
+                  summary={movie.summary}
+                  poster={movie.medium_cover_image}
+                  //poster의 이미지를 렌더링한다.
+                />
+              );
+            })}
+          </div>
+        )}
+      </section>
+    );
+  }
+}
+```
+
+```jsx
+//App07클래스의 코드 일부분
+render() {
+    const { isLoading, movies } = this.state;
+    return (
+      <section class='container'>
+        {isLoading
+          ? (
+             <div class='loader'>
+        <span class='loader-class'>Loading...</span>
+        </div>
+          )
+          :
+          (
+            <div class='movies'>
+            {
+          movies.map(movie => {
+              console.log(movie);
+              //Movie컴포넌트를 호출함과 동시에 movie객체의 값을 prop값으로 지정해준다
+              return (
+                <Movie key={movie.id} id={movie.id} year={movie.year} title={movie.title} summary={movie.summary} poster={movie.poster} />
+              )
+            }
+            )
+            }
+            </div>
+          )}
+
+
+            </section>
+
+    );
+  }
+}
+```
+
+```jsx
+import propTypes from "prop-types";
+
+function Movie({ id, year, title, summary, poster }) {
+  //Moive의 prop값을 받아온 것 중 title부분을 h4태그를 사용해 출력한다.
+  return <h4>{title}</h4>;
+}
+
+Movie.propTypes = {
+  id: propTypes.number.isRequired,
+  year: propTypes.number.isRequired,
+  title: propTypes.string.isRequired,
+  summary: propTypes.string.isRequired,
+  poster: propTypes.string.isRequired,
+};
+
+export default Movie;
+```
+
 ## [10월 6일]
 
 ```jsx
@@ -124,6 +265,7 @@ export default App;
 </tr>
 
 </table>
+
 ## [9월 29일]
 
 ```jsx
