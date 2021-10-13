@@ -1,5 +1,7 @@
 import axios from "axios";
 import React from "react";
+import Movie from "./Movie";
+import "./App.css";
 
 class App07 extends React.Component {
   state = {
@@ -24,8 +26,34 @@ class App07 extends React.Component {
   }
 
   render() {
-    const { isLoading } = this.state;
-    return <div>{isLoading ? "Loading" : "영화 데이터 출력"}</div>;
+    const { isLoading, movies } = this.state;
+    return (
+      <section className="container">
+        {isLoading ? (
+          <div className="loader">
+            <span className="loader-class">Loading...</span>
+          </div>
+        ) : (
+          <div className="movies">
+            {movies.map(movie => {
+              console.log(movie);
+              //Movie컴포넌트를 호출함과 동시에 movie객체의 값을 prop값으로 지정해준다
+              return (
+                <Movie
+                  key={movie.id}
+                  id={movie.id}
+                  year={movie.year}
+                  title={movie.title}
+                  summary={movie.summary}
+                  poster={movie.medium_cover_image}
+                  genres={movie.genres}
+                />
+              );
+            })}
+          </div>
+        )}
+      </section>
+    );
   }
 }
 
