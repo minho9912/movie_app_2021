@@ -2,6 +2,11 @@
 
 ## [10월 13일]
 
+<hr>
+jsx문법에서 html태그의 class를 className으로 표기하는 이유는<br>
+리액트에서는 코드를 해석할 때, html의 class와 자바스크립트의 class라는
+이름이 겹치면 리액트가 혼란스러워할 수 있기 때문이다.
+<hr>
 ```jsx
 //영화 장르 출력하기
 function Movie({ id, year, title, summary, poster, genres }) {
