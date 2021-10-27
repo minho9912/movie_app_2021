@@ -1,5 +1,86 @@
 # 최민호 201840135
 
+## [10월 27일]
+
+```jsx
+<ul className="movie-genres">
+  {genres.map((genre, index) => {
+    return (
+      <li key={index} className="movie-genre">
+        {genre}
+      </li>
+    );
+  })}
+</ul>
+
+// li태그의 key props 값을 지정하기 위해
+// map함수 element부분인 genre, index부분인 index 매개변수로
+// 각각의 값을 받아왔다.
+```
+
+```jsx
+<p className="movie-summary">{summary.slice(0, 180)}...</p>
+//자바스크립트 slice함수를 사용해 summary의 문자열을
+//0번째부터 180번째 까지 자른 내용만 보여주게 만들어준다.
+```
+
+```jsx
+function About() {
+  return <span>About Component.</span>;
+}
+export default About;
+
+// About 컴포넌트 내보내기
+```
+
+```jsx
+import "./App.css";
+import { HashRouter, Route } from "react-router-dom";
+import About from "./routes/About";
+
+function App07() {
+  return (
+    // router-dom을 사용한 기능
+    <HashRouter>
+      <Route path="/about" component={About} />
+    </HashRouter>
+    // about 컴포넌트 불러옴.
+  );
+}
+
+export default App07;
+```
+
+<ul> 메뉴를 클릭하면 화면이 이동해야함, 이때 필요한 것이 라우터이다.
+<li>react-router-dom 설치하기</li>
+<li>components 폴더에 Movie 컴포넌트 옮기기</li>
+<li>routes 폴어게 라우터가 보여줄 화면 만들기</li>
+<li>Home.js 수정하기</li>
+<li>Home.css 생성 / App.js 수정</li>
+</ul>
+
+<ul> routes , components 폴더 생성
+<li>Movie.js / Movie.css 파일 components폴더에 넣기</li>
+<li>routes폴더에 About.js, Home.js, Home.css 생성</li>
+<li>App.js 폴더의 모든 내용을 Home.js에 붙여넣기</li>
+<li>App.js 기존 내용 삭제 후 route실습</li>
+</ul>
+
+```jsx
+import { Link } from "react-router-dom";
+
+function Navigation() {
+  return (
+    <div>
+      <Link to="/">Home</Link>
+      <Link to="/about">About</Link>
+    </div>
+  );
+}
+
+export default Navigation;
+```
+
 ## [10월 13일]
 
 <hr>
