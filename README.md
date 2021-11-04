@@ -1,5 +1,107 @@
 # 최민호 201840135
 
+## [11월 3일]
+
+### 영화 제목 출력
+
+```jsx
+class Detail extends React.Component {
+  componentDidMount() {
+    const { location, history } = this.props;
+    if (location.state === undefined) {
+      history.push("/");
+    }
+  }
+
+  render() {
+    const { location } = this.props;
+    if (location.state) {
+      return <span>{location.state.title}</span>;
+    } else {
+      return null;
+    }
+  }
+}
+```
+
+- props값으로 받아온 영화데이터를 span태그를 사용해 출력 및
+- location.state가 없으면 render함수가 null을 반환
+
+---
+
+### push 함수 사용
+
+```jsx
+class Detail extends React.Component {
+  componentDidMount() {
+    const { location, history } = this.props;
+    if (location.state === undefined) {
+      history.push("/");
+    }
+  }
+  render() {
+    return <span>hello</span>;
+  }
+}
+```
+
+- location.state가 undefined인 경우 history.push["/"]실행
+
+---
+
+### Detail 컴포넌트를 클래스형으로
+
+```jsx
+class Detail extends React.Component {
+  componentDidMount() {
+    const { location, history } = this.props;
+  }
+  render() {
+    return <span>hello</span>;
+  }
+}
+```
+
+---
+
+### App.js에 Route컴포넌트 추가
+
+```jsx
+import Detail from "./routes/Detail";
+//HashRouter 내부
+<Route path="/movie-detail" component={Detail} />;
+```
+
+---
+
+### Detail.js 생성
+
+```jsx
+function Detail(props) {
+  console.log(props);
+  return <span>hello</span>;
+}
+export default Detail;
+```
+
+- 화면에서 영화카드를 클릭했을때 출력할 내용
+
+---
+
+### Movie.js에 Link컴포넌트 추가
+
+- `<Link to={{ pathname: "/movie-detail", state: { year, title, summary, poster, genres } }}>`
+- 영화 카드 클릭시, /movie-detail로 이동하게된다.
+
+---
+
+### Navigation.js 내용수정
+
+- ` <Link to={{pathname: '/about', state: {fromNavigation: true}}>About<Link>`
+- pathname은 URL을 의미하고, state는 route props로 보내줄 데이터를 의미한다.
+
+---
+
 ## [10월 27일]
 
 ```jsx
