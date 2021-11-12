@@ -1,5 +1,94 @@
 # 최민호 201840135
 
+## [11월 10일]
+
+### 공식문서 ch2. 상태를 가지는 컴포넌트
+
+```jsx
+class Timer extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { seconds: 0 };
+  }
+
+  tick() {
+    this.setState(state => ({
+      seconds: state.seconds + 1,
+    }));
+  }
+
+  componentDidMount() {
+    this.interval = setInterval(() => this.tick(), 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
+  render() {
+    return <div>Seconds: {this.state.seconds}</div>;
+  }
+}
+
+ReactDOM.render(<Timer />, document.getElementById("timer-example"));
+```
+
+- 1. state의 seconds 객체 값을 0으로 초기화 한다.
+- 2. tick()이라는 함수를 생성 후 this.setState를 사용해 함수가 호출.
+- 3. 호출 될 때마다 seconds의 값을 1씩 증가시킨다.
+- 4. componentDidMount()로 리액트앱이 준비될 때 마다 setInterval함수를 통해  
+     1초마다 한번씩 tick()함수를 호출하게 만든다.
+- 5. render에서 div태그에 second를 출력하게 만든다.
+
+---
+
+### 공식문서 ch1. 간단한 컴포넌트
+
+```jsx
+class HelloMessage extends React.Component {
+  render() {
+    return <div>Hello {this.props.name}</div>;
+  }
+}
+
+ReactDOM.render(<HelloMessage name="Taylor" />, document.getElementById("hello-example"));
+```
+
+- 리액트 클론코딩에서 배웠던 것 처럼, 컴포넌트(함수)를 생성 후  
+  render에 전달해 출력하는 방법도 있다.
+- 하지만 위 방식처럼 ReactDOM.render()속성을 사용해 내부에 직접  
+  컴포넌트와 props값을 생성하고 바로 getElement속성으로 html을 통해 출력하는 것도 가능하다.
+
+---
+
+### js파일 없이 리액트 앱 생성
+
+```html
+<script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.js"></script>
+```
+
+- react cdn과 babel cdn을 사용해 html내부에서 리액트를 사용할 수 있다.
+
+---
+
+### package.json 파일 수정 (배포)
+
+```jsx
+"scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "predeploy" : "npm run build",
+    "deploy": "gh-pages -d build"
+  },
+"homepage": "https://minho9912.github.io/movie_app_2021"
+```
+
+- 깃허브 주소를 영화앱이 인식할 수 있도록 json파일 수정
+
+---
+
 ## [11월 3일]
 
 ### 영화 제목 출력
