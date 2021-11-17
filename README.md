@@ -1,4 +1,151 @@
 # 최민호 201840135
+## [11월 17일]
+
+
+
+|    Remarkable     |   기능            |
+| ---------------- | ------------------------ |
+| npm i remarkable --save | MarkDown을 html에서 사용할 수 있다.(변환기능) |
+
+```jsx
+import { Remarkable } from 'remarkable';
+var md = new Remarkable();
+
+console.log(md.render('# Remarkable rulezz!'));
+// => <h1>Remarkable rulezz!</h1>
+```
+- 입력받은 값을 마크다운 문법으로 해석해준다.
+---
+
+```jsx
+class MarkdownEditor extends React.Component {
+  constructor(props) {
+    super(props);
+    this.md = new Remarkable();
+    this.handleChange = this.handleChange.bind(this);
+    this.state = { value: 'Hello, **world**!' };
+  }
+
+  handleChange(e) {
+    this.setState({ value: e.target.value });
+  }
+
+  getRawMarkup() {
+    return { __html: this.md.render(this.state.value) };
+  }
+
+  render() {
+    return (
+      <div className="MarkdownEditor">
+        <h3>Input</h3>
+        <label htmlFor="markdown-content">
+          Enter some markdown
+        </label>
+        <textarea
+          id="markdown-content"
+          onChange={this.handleChange}
+          defaultValue={this.state.value}
+        />
+        <h3>Output</h3>
+        <div
+          className="content"
+          dangerouslySetInnerHTML={this.getRawMarkup()}
+        />
+      </div>
+    );
+  }
+}
+
+
+```
+
+- render()메소드에서 초기 렌더링을 실행.
+- this.md,handleChange 함수 선언(바인딩용)
+- this.state 값으로 value라는 변수에 문자열 담기
+- getRawMarkup함수는 텍스트값 markdown처리 기능
+- dangerouslySetInnerHTML 속성으로 input박스에 입력된 값 markdown처리
+---
+
+```jsx
+class TodoApp extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { items: [], text: '' };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  render() {
+    return (
+      <div>
+        <h3>TODO</h3>
+        <TodoList items={this.state.items} />
+        <form onSubmit={this.handleSubmit}>
+          <label htmlFor="new-todo">
+            What needs to be done?
+          </label>
+          <input
+            id="new-todo"
+            onChange={this.handleChange}
+            value={this.state.text}
+          />
+          <button>
+            Add #{this.state.items.length + 1}
+          </button>
+        </form>
+      </div>
+    );
+  }
+
+  handleChange(e) {
+    this.setState({ text: e.target.value });
+  }
+
+  handleSubmit(e) {
+    e.preventDefault();
+    if (this.state.text.length === 0) {
+      return;
+    }
+    const newItem = {
+      text: this.state.text,
+      id: Date.now()
+    };
+    this.setState(state => ({
+      items: state.items.concat(newItem),
+      text: ''
+    }));
+  }
+}
+
+class TodoList extends React.Component {
+  render() {
+    return (
+      <ul>
+        {this.props.items.map(item => (
+          <li key={item.id}>{item.text}</li>
+        ))}
+      </ul>
+    );
+  }
+}
+
+ReactDOM.render(
+  <TodoApp />,
+  document.getElementById('todos-example')
+);
+```
+- TodoApp과 TodoList 두개의 컴포넌트로 구성
+- handleChange는 모든 키보드 입력마다 react의 state를 갱신해서 보여줌 (elelment에서 확인)
+- 시간순으로 보면 다음과 같이 동작한다 (유저입력 - handleChange - state 갱신 - form ele가 react state참조)
+- 유저 입력을 강제로 대문자로 변경할 경우에도 사용  
+1- handleSubmit(e)에서 e.preventDeault() 메소드를 사용하는 이유는,  
+2- state.text의 길이가 0 이면 마우것도 반환을 못함  
+3- 0이 아니면 newItem에 입력 받은 text와 현재 시간을 저장함  
+4- 현재 시간은 왜 저장하는걸까? 조금 생각해보기  
+5- 이렇게 된 newItem을 state의 item배열에 저장하고 text를 비운다
+- handleChange,handleSubmit 함수의 결과로 지정된 state의 text값을 TodoList컴포넌트에 렌더링해줌
+
+---
 
 ## [11월 10일]
 
