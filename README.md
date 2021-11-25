@@ -1,20 +1,81 @@
 # 최민호 201840135
+
+## [11월 24일]
+
+### 리액트 시작하기
+
+#### <b>ch1. 리액트 시도해보기</b>
+
+- React는 처음부터 점진적으로 적용할 수 있도록 설계되었으며 필요한 만큼 React를 사용할 수 있습니다.
+- 대규모 애플리케이션에 권장되는 여러 개의 JavaScript 툴체인들이 있습니다. 각 툴체인은 많은 설정 없이 작동할 수 있고 풍부한 React 에코시스템을 최대한 활용할 수 있습니다.
+
+#### <b>ch2. 리액트 배우기</b>
+
+- 접 구현해보면서 학습하는 것을 원하시는 경우,
+  <a href="https://ko.reactjs.org/tutorial/tutorial.html">실용적인 자습서</a>부터 시작하세요.
+- 개념을 차근차근 익히며 학습하는 것을 원하시는 경우, <a href="https://ko.reactjs.org/docs/hello-world.html">주요 개념 가이드</a>부터 시작하세요.
+
+### 리액트의 주요 개념
+
+- Hello World
+
+  - 가장 단순한 React 예시는 다음과같이 생겼습니다.
+  - `ReactDOM.render(<h1>Hello, world!</h1>,document.getElementById('root'));`
+  - 위 코드는 페이지에 “Hello, world!”라는 제목을 보여줍니다.
+
+- jsx 소개
+  - `const element = <h1>Hello, world!</h1>;`
+  - 위 태그 문법은 문자열도, html도 아닙니다.
+  - JSX라 하며 JavaScript를 확장한 문법입니다. UI가 어떻게 생겨야 하는지 설명하기 위해 React와 함께 사용할 것을 권장합니다. JSX라고 하면 템플릿 언어가 떠오를 수도 있지만, JavaScript의 모든 기능이 포함되어 있습니다.
+- jsx에 표현식 포함하기
+  - `const name = 'Josh Perez';const element = <h1>Hello, {name}</h1>;ReactDOM.render(element,document.getElementByI('root'));`
+  - JSX의 중괄호 안에는 유효한 모든 JavaScript 표현식을 넣을 수 있습니다. 예를 들어 2 + 2, user.firstName 또는 formatName(user) 등은 모두 유효한 JavaScript 표현식입니다.
+
+```jsx
+// jsx 예시
+function getGreeting(user) {
+  if (user) {
+    return <h1>Hello, {formatName(user)}!</h1>;
+  }
+  return <h1>Hello, Stranger.</h1>;
+}
+```
+
+- 엘리먼트 렌더링
+  - 엘리먼트는 React 앱의 가장 작은 단위입니다.
+  - 브라우저 DOM 엘리먼트와 달리 React 엘리먼트는 일반 객체이며(plain object) 쉽게 생성할 수 있습니다. React DOM은 React 엘리먼트와 일치하도록 DOM을 업데이트합니다.
+- Components와 Props
+  - 개념적으로 컴포넌트는 JavaScript 함수와 유사합니다. “props”라고 하는 임의의 입력을 받은 후, 화면에 어떻게 표시되는지를 기술하는 React 엘리먼트를 반환합니다.
+
+```jsx
+// 함수 / 클래스 컴포넌트
+function Welcome(props) {
+  return <h1>Hello, {props.name}</h1>;
+}
+//
+class Welcome extends React.Component {
+  render() {
+    return <h1>Hello, {this.props.name}</h1>;
+  }
+}
+```
+
 ## [11월 17일]
 
-
-
-|    Remarkable     |   기능            |
-| ---------------- | ------------------------ |
+| Remarkable              | 기능                                          |
+| ----------------------- | --------------------------------------------- |
 | npm i remarkable --save | MarkDown을 html에서 사용할 수 있다.(변환기능) |
 
 ```jsx
-import { Remarkable } from 'remarkable';
+import { Remarkable } from "remarkable";
 var md = new Remarkable();
 
-console.log(md.render('# Remarkable rulezz!'));
+console.log(md.render("# Remarkable rulezz!"));
 // => <h1>Remarkable rulezz!</h1>
 ```
+
 - 입력받은 값을 마크다운 문법으로 해석해준다.
+
 ---
 
 ```jsx
@@ -23,7 +84,7 @@ class MarkdownEditor extends React.Component {
     super(props);
     this.md = new Remarkable();
     this.handleChange = this.handleChange.bind(this);
-    this.state = { value: 'Hello, **world**!' };
+    this.state = { value: "Hello, **world**!" };
   }
 
   handleChange(e) {
@@ -38,25 +99,14 @@ class MarkdownEditor extends React.Component {
     return (
       <div className="MarkdownEditor">
         <h3>Input</h3>
-        <label htmlFor="markdown-content">
-          Enter some markdown
-        </label>
-        <textarea
-          id="markdown-content"
-          onChange={this.handleChange}
-          defaultValue={this.state.value}
-        />
+        <label htmlFor="markdown-content">Enter some markdown</label>
+        <textarea id="markdown-content" onChange={this.handleChange} defaultValue={this.state.value} />
         <h3>Output</h3>
-        <div
-          className="content"
-          dangerouslySetInnerHTML={this.getRawMarkup()}
-        />
+        <div className="content" dangerouslySetInnerHTML={this.getRawMarkup()} />
       </div>
     );
   }
 }
-
-
 ```
 
 - render()메소드에서 초기 렌더링을 실행.
@@ -64,13 +114,14 @@ class MarkdownEditor extends React.Component {
 - this.state 값으로 value라는 변수에 문자열 담기
 - getRawMarkup함수는 텍스트값 markdown처리 기능
 - dangerouslySetInnerHTML 속성으로 input박스에 입력된 값 markdown처리
+
 ---
 
 ```jsx
 class TodoApp extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { items: [], text: '' };
+    this.state = { items: [], text: "" };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -81,17 +132,9 @@ class TodoApp extends React.Component {
         <h3>TODO</h3>
         <TodoList items={this.state.items} />
         <form onSubmit={this.handleSubmit}>
-          <label htmlFor="new-todo">
-            What needs to be done?
-          </label>
-          <input
-            id="new-todo"
-            onChange={this.handleChange}
-            value={this.state.text}
-          />
-          <button>
-            Add #{this.state.items.length + 1}
-          </button>
+          <label htmlFor="new-todo">What needs to be done?</label>
+          <input id="new-todo" onChange={this.handleChange} value={this.state.text} />
+          <button>Add #{this.state.items.length + 1}</button>
         </form>
       </div>
     );
@@ -108,11 +151,11 @@ class TodoApp extends React.Component {
     }
     const newItem = {
       text: this.state.text,
-      id: Date.now()
+      id: Date.now(),
     };
     this.setState(state => ({
       items: state.items.concat(newItem),
-      text: ''
+      text: "",
     }));
   }
 }
@@ -129,20 +172,18 @@ class TodoList extends React.Component {
   }
 }
 
-ReactDOM.render(
-  <TodoApp />,
-  document.getElementById('todos-example')
-);
+ReactDOM.render(<TodoApp />, document.getElementById("todos-example"));
 ```
+
 - TodoApp과 TodoList 두개의 컴포넌트로 구성
 - handleChange는 모든 키보드 입력마다 react의 state를 갱신해서 보여줌 (elelment에서 확인)
 - 시간순으로 보면 다음과 같이 동작한다 (유저입력 - handleChange - state 갱신 - form ele가 react state참조)
 - 유저 입력을 강제로 대문자로 변경할 경우에도 사용  
-1- handleSubmit(e)에서 e.preventDeault() 메소드를 사용하는 이유는,  
-2- state.text의 길이가 0 이면 마우것도 반환을 못함  
-3- 0이 아니면 newItem에 입력 받은 text와 현재 시간을 저장함  
-4- 현재 시간은 왜 저장하는걸까? 조금 생각해보기  
-5- 이렇게 된 newItem을 state의 item배열에 저장하고 text를 비운다
+  1- handleSubmit(e)에서 e.preventDeault() 메소드를 사용하는 이유는,  
+  2- state.text의 길이가 0 이면 마우것도 반환을 못함  
+  3- 0이 아니면 newItem에 입력 받은 text와 현재 시간을 저장함  
+  4- 현재 시간은 왜 저장하는걸까? 조금 생각해보기  
+  5- 이렇게 된 newItem을 state의 item배열에 저장하고 text를 비운다
 - handleChange,handleSubmit 함수의 결과로 지정된 state의 text값을 TodoList컴포넌트에 렌더링해줌
 
 ---
