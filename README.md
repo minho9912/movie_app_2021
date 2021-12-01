@@ -1,6 +1,34 @@
 # 최민호 201840135
 
-## [11월 24일]
+## [12월 1일]
+
+### 리액트 시작하기
+
+#### <b>ch2-n컴포넌트 추출</b>
+
+```jsx
+function Comment(props) {
+  return (
+    <div className="Comment">
+      <div className="UserInfo">
+        <img className="Avatar" src={props.author.avatarUrl} alt={props.author.name} />
+        <div className="UserInfo-name">{props.author.name}</div>
+      </div>
+      <div className="Comment-text">{props.text}</div>
+      <div className="Comment-date">{formatDate(props.date)}</div>
+    </div>
+  );
+}
+```
+
+- 이 컴포넌트는 author(객체), text(문자열) 및 date(날짜)를 props로 받은 후 소셜 미디어 웹 사이트의 코멘트를 나타냅니다.
+- Avatar 컴포넌트를 따로 추출해 props의 값을 user로 변경할 수 있습니다.
+- Comment 컴포넌트의 UserInfo부분에 ` <Avatar user={props.author} />`을 추가합니다
+- UserInfo 컴포넌트 또한 props값을 user로 수정하여 따로 추출합니다.
+- 추출한 UserInfo 값의 UserInfo클래스 내부에` <Avatar user={props.user} />`를 추가합니다.
+- Comment 컴포넌트의 UserInfo부분에 ` <UserInfo user={props.author} /> `을 추가합니다
+
+---
 
 ### 리액트 시작하기
 
@@ -153,7 +181,7 @@ class TodoApp extends React.Component {
       text: this.state.text,
       id: Date.now(),
     };
-    this.setState(state => ({
+    this.setState((state) => ({
       items: state.items.concat(newItem),
       text: "",
     }));
@@ -164,7 +192,7 @@ class TodoList extends React.Component {
   render() {
     return (
       <ul>
-        {this.props.items.map(item => (
+        {this.props.items.map((item) => (
           <li key={item.id}>{item.text}</li>
         ))}
       </ul>
@@ -200,7 +228,7 @@ class Timer extends React.Component {
   }
 
   tick() {
-    this.setState(state => ({
+    this.setState((state) => ({
       seconds: state.seconds + 1,
     }));
   }
@@ -478,7 +506,7 @@ function Movie({ id, year, title, summary, poster, genres }) {
         <h3 className="movie-title">{title}</h3>
         <h5 className="movie-year">{year}</h5>
         <ul className="movie-genres">
-          {genres.map(genre => {
+          {genres.map((genre) => {
             //genres값으로 받아온 것을 map함수를 사용해 li태그로 출력한다.
             return <li>{genre}</li>;
           })}
@@ -697,7 +725,7 @@ class App extends Component {
   };
   add = () => {
     console.log("add");
-    this.setState(current => ({ count: this.state.count + 1 }));
+    this.setState((current) => ({ count: this.state.count + 1 }));
   };
 
   componentDidUpdate() {
@@ -923,7 +951,7 @@ function App() {
   return (
     <div className="App">
       <h1>Hello React!!!!</h1>
-      {foodLike.map(dish => (
+      {foodLike.map((dish) => (
         <Food name={dish.name} picture={dish.image} />
       ))};{/* Food 컴포넌트에 객체 데이터를 생성해 props값으로 전달한다. */}
     </div>
