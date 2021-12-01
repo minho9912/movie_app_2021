@@ -3,6 +3,144 @@
 ## [12월 1일]
 
 ### 리액트 시작하기
+#### <b>ch3-n'State 업데이트는 병합됩니다'</b>
+- setState()를 호출할 때 React는 제공한 객체를 현재 state로 병합합니다.
+```jsx
+ constructor(props) {
+    super(props);
+    this.state = {
+      posts: [],
+      comments: []
+    };
+  }
+componentDidMount() {
+    fetchPosts().then(response => {
+      this.setState({
+        posts: response.posts
+      });
+    });
+
+    fetchComments().then(response => {
+      this.setState({
+        comments: response.comments
+      });
+    });
+  }
+```
+- 병합은 얕게 이루어지기 때문에 this.setState({comments})는 this.state.posts에 영향을 주진 않지만 this.state.comments는 완전히 대체됩니다.
+---
+
+#### <b>ch3-n'State업데이트는 비동기적일 수도 있다'</b>
+- React는 성능을 위해 여러 setState() 호출을 단일 업데이트로 한꺼번에 처리할 수 있습니다.
+this.props와 this.state가 비동기적으로 업데이트될 수 있기 때문에 다음 state를 계산할 때 해당 값에 의존해서는 안 됩니다.
+---
+#### <b>ch3-n'State를 올바르게 사용하기'</b>
+- 직접 State를 수정하지 마세요
+```jsx
+// Wrong
+this.state.comment = 'Hello';
+// 위 코드는 컴포넌트를 다시 렌더링하지 않습니다.
+// Correct
+this.setState({comment: 'Hello'});
+// 대신 setState를 사용합니다.
+```
+---
+
+#### <b>ch3-n'생명주기 메서드 추가하기'</b>
+```jsx
+componentDidMount() {
+  }
+
+  componentWillUnmount() {
+  }
+```
+- 이러한 메서드들은 “생명주기 메서드”라고 불립니다.  
+componentDidMount() 메서드는 컴포넌트 출력물이 DOM에 렌더링 된 후에 실행됩니다. 이 장소가 타이머를 설정하기에 좋은 장소입니다
+```jsx
+  componentDidMount() {
+    this.timerID = setInterval(
+      () => this.tick(),
+      1000
+    );
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timerID);
+  }
+
+  tick() {
+    this.setState({
+      date: new Date()
+    });
+  }
+```
+- clock 컴포넌트가 매초 작동하도록 하는 tick()이라는 메서드를 구현했습니다. 이것은 컴포넌트
+로컬 state를 업데이트하기 위해 this.setState() 를 사용합니다.
+---
+#### <b>ch3-n'클래스에 로컬 state 추가하기'</b>
+- render() 메서드 안에 있는 this.props.date를 this.state.date로 변경합니다.
+```jsx
+class Clock extends React.Component {
+  render() {
+    return (
+      <div>
+        <h1>Hello, world!</h1>
+        <h2>It is {this.state.date.toLocaleTimeString()}.</h2>
+      </div>
+    );
+  }
+}
+```
+- 초기 this.state를 지정하는 class constructor를 추가합니다.
+```jsx
+class Clock extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {date: new Date()};
+  }
+```
+- <Clock /> 요소에서 date prop을 삭제합니다.
+```jsx
+ReactDOM.render(
+  <Clock />,
+  document.getElementById('root')
+);
+```
+---
+#### <b>ch3-n'함수에서 클래스로 변환하기'</b>
+- React.Component를 확장하는 동일한 이름의 ES6 class를 생성합니다.
+- render()라고 불리는 빈 메서드를 추가합니다.
+- 함수의 내용을 render() 메서드 안으로 옮깁니다.
+- render() 내용 안에 있는 props를 this.props로 변경합니다.
+- 남아있는 빈 함수 선언을 삭제합니다.
+```jsx
+class Clock extends React.Component {
+  render() {
+    return (
+      <div>
+        <h1>Hello, world!</h1>
+        <h2>It is {this.props.date.toLocaleTimeString()}.</h2>
+      </div>
+    );
+  }
+}
+```
+- Clock은 이제 함수가 아닌 클래스로 정의됩니다.
+- <Clock />을 렌더링하는 경우 Clock 클래스의 단일 인스턴스만 사용됩니다. 이것은 로컬 state와 생명주기 메서드와 같은 부가적인 기능을 사용할 수 있게 해줍니다.
+---
+
+#### <b>ch2-n'props'는 읽기 전용이다</b>
+- 함수 컴포넌트나 클래스 컴포넌트 모두 컴포넌트의 자체 props를 수정해서는 안 됩니다. 다음 sum 함수를 살펴봅시다.
+```jsx
+function sum(a, b) {
+  return a + b;
+}
+```
+- 이런 함수들은 순수 함수라고 호칭합니다. 입력값을 바꾸려 하지 않고 항상 동일한 입력값에 대해 동일한 결과를 반환하기 때문입니다.   
+- 모든 React 컴포넌트는 자신의 props를 다룰 때 반드시 순수 함수처럼 동작해야 합니다.
+---
+
+
 
 #### <b>ch2-n컴포넌트 추출</b>
 
