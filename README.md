@@ -1,10 +1,515 @@
 # 최민호 201840135
 
+## [12월 8일]
+
+### 리액트 시작하기
+
+#### <b>Hook 소개</b>
+
+- Hook은 React 버전 16.8부터 React 요소로 새로 추가되었습니다. Hook을 이용하여 기존 Class 바탕의 코드를 작성할 필요 없이 상태 값과 여러 React의 기능을 사용할 수 있습니다.
+
+```jsx
+import React, { useState } from 'react';
+
+function Example() {
+  // "count"라는 새로운 상태 값을 정의합니다.
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>
+        Click me
+      </button>
+    </div>
+  );
+```
+
+- useState는 우리가 “Hook”에서 처음 배우게 될 함수입니다. 이 예시는 단지 맛보기에 불과합니다. 아직 이해되지 않아도 걱정하지 마세요!
+- 선택적 사용 기존의 코드를 다시 작성할 필요 없이 일부의 컴포넌트들 안에서 Hook을 사용할 수 있습니다. 그러나 당장 Hook이 필요 없다면, Hook을 사용할 필요는 없습니다.
+- 100% 이전 버전과의 호환성 Hook은 호환성을 깨뜨리는 변화가 없습니다.
+- 현재 사용 가능 Hook은 배포 v16.8.0에서 사용할 수 있습니다.
+
+---
+
+#### <b>ch11-n'합성vs상속-컴포넌트에서 다른 컴포넌트를 담기'</b>
+
+- 어떤 컴포넌트들은 어떤 자식 엘리먼트가 들어올 지 미리 예상할 수 없는 경우가 있습니다. 범용적인 ‘박스’ 역할을 하는 Sidebar 혹은 Dialog와 같은 컴포넌트에서 특히 자주 볼 수 있습니다.
+
+```jsx
+function FancyBorder(props) {
+  return <div className={"FancyBorder FancyBorder-" + props.color}>{props.children}</div>;
+}
+
+function WelcomeDialog() {
+  return (
+    <FancyBorder color="blue">
+      <h1 className="Dialog-title">Welcome</h1>
+      <p className="Dialog-message">Thank you for visiting our spacecraft!</p>
+    </FancyBorder>
+  );
+}
+
+ReactDOM.render(<WelcomeDialog />, document.getElementById("root"));
+```
+
+- <FancyBorder> JSX 태그 안에 있는 것들이 FancyBorder 컴포넌트의 children prop으로 전달됩니다. FancyBorder는 {props.children}을 <div> 안에 렌더링하므로 전달된 엘리먼트들이 최종 출력됩니다.
+
+---
+
+#### <b>SplitPane</b>
+
+```jsx
+function Contacts() {
+  return <div className="Contacts" />;
+}
+
+function Chat() {
+  return <div className="Chat" />;
+}
+
+function SplitPane(props) {
+  return (
+    <div className="SplitPane">
+      <div className="SplitPane-left">{props.left}</div>
+      <div className="SplitPane-right">{props.right}</div>
+    </div>
+  );
+}
+
+function App() {
+  return <SplitPane left={<Contacts />} right={<Chat />} />;
+}
+
+ReactDOM.render(<App />, document.getElementById("root"));
+```
+
+- <Contacts />와 <Chat />같은 React 엘리먼트는 단지 객체이기 때문에 다른 데이터처럼 prop으로 전달할 수 있습니다. 이러한 접근은 다른 라이브러리의 “슬롯 (slots)“과 비슷해보이지만 React에서 prop으로 전달할 수 있는 것에는 제한이 없습니다.
+
+---
+
+#### <b>ch10-n'state 끌어올리기'</b>
+
+- 먼저 BoilingVerdict라는 이름의 컴포넌트부터 만들어봅시다. 이 컴포넌트는 섭씨온도를 의미하는 celsius prop를 받아서 이 온도가 물이 끓기에 충분한지 여부를 출력합니다.
+- Calculator 컴포넌트는 온도를 입력할 수 있는 input을 렌더링하고 그 값을 this.state.temperature에 저장한다.
+
+```jsx
+const scaleNames = {
+  c: 'Celsius',
+  f: 'Fahrenheit'
+};
+
+function toCelsius(fahrenheit) {
+  return (fahrenheit - 32) * 5 / 9;
+}
+
+function toFahrenheit(celsius) {
+  return (celsius * 9 / 5) + 32;
+}
+
+function tryConvert(temperature, convert) {
+  const input = parseFloat(temperature);
+  if (Number.isNaN(input)) {
+    return '';
+  }
+  const output = convert(input);
+  const rounded = Math.round(output * 1000) / 1000;
+  return rounded.toString();
+}
+
+function BoilingVerdict(props) {
+  if (props.celsius >= 100) {
+    return <p>The water would boil.</p>;
+  }
+  return <p>The water would not boil.</p>;
+}
+
+class TemperatureInput extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange(e) {
+    this.props.onTemperatureChange(e.target.value);
+  }
+
+  render() {
+    const temperature = this.props.temperature;
+    const scale = this.props.scale;
+    return (
+      <fieldset>
+        <legend>Enter temperature in {scaleNames[scale]}:</legend>
+        <input value={temperature}
+               onChange={this.handleChange} />
+      </fieldset>
+    );
+  }
+}
+
+class Calculator extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleCelsiusChange = this.handleCelsiusChange.bind(this);
+    this.handleFahrenheitChange = this.handleFahrenheitChange.bind(this);
+    this.state = {temperature: '', scale: 'c'};
+  }
+
+  handleCelsiusChange(temperature) {
+    this.setState({scale: 'c', temperature});
+  }
+
+  handleFahrenheitChange(temperature) {
+    this.setState({scale: 'f', temperature});
+  }
+
+  render() {
+    const scale = this.state.scale;
+    const temperature = this.state.temperature;
+    const celsius = scale === 'f' ? tryConvert(temperature, toCelsius) : temperature;
+    const fahrenheit = scale === 'c' ? tryConvert(temperature, toFahrenheit) : temperature;
+
+    return (
+      <div>
+        <TemperatureInput
+          scale="c"
+          temperature={celsius}
+          onTemperatureChange={this.handleCelsiusChange} />
+        <TemperatureInput
+          scale="f"
+          temperature={fahrenheit}
+          onTemperatureChange={this.handleFahrenheitChange} />
+        <BoilingVerdict
+          celsius={parseFloat(celsius)} />
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(
+  <Calculator />,
+  document.getElementById('root')
+);
+-
+```
+
+- React는 DOM <input>의 onChange에 지정된 함수를 호출합니다. 위 예시의 경우 TemperatureInput의 handleChange 메서드에 해당합니다.
+- TemperatureInput 컴포넌트의 handleChange 메서드는 새로 입력된 값과 함께 this.props.onTemperatureChange()를 호출합니다. onTemperatureChange를 포함한 이 컴포넌트의 props는 부모 컴포넌트인 Calculator로부터 제공받은 것입니다.
+- 이전 렌더링 단계에서, Calculator는 섭씨 TemperatureInput의 onTemperatureChange를 Calculator의 handleCelsiusChange 메서드로, 화씨 TemperatureInput의 onTemperatureChange를 Calculator의 handleFahrenheitChange 메서드로 지정해놓았습니다. 따라서 우리가 둘 중에 어떤 입력 필드를 수정하느냐에 따라서 Calculator의 두 메서드 중 하나가 호출됩니다.
+- 이들 메서드는 내부적으로 Calculator 컴포넌트가 새 입력값, 그리고 현재 수정한 입력 필드의 입력 단위와 함께 this.setState()를 호출하게 함으로써 React에게 자신을 다시 렌더링하도록 요청합니다.
+- React는 UI가 어떻게 보여야 하는지 알아내기 위해 Calculator 컴포넌트의 render 메서드를 호출합니다. 두 입력 필드의 값은 현재 온도와 활성화된 단위를 기반으로 재계산됩니다. 온도의 변환이 이 단계에서 수행됩니다.
+- React는 Calculator가 전달한 새 props와 함께 각 TemperatureInput 컴포넌트의 render 메서드를 호출합니다. 그러면서 UI가 어떻게 보여야 할지를 파악합니다.
+- React는 BoilingVerdict 컴포넌트에게 섭씨온도를 props로 건네면서 그 컴포넌트의 render 메서드를 호출합니다.
+- React DOM은 물의 끓는 여부와 올바른 입력값을 일치시키는 작업과 함께 DOM을 갱신합니다. 값을 변경한 입력 필드는 현재 입력값을 그대로 받고, 다른 입력 필드는 변환된 온도 값으로 갱신됩니다.
+
+---
+
+#### <b>ch9-n'폼(Form)'</b>
+
+- HTML에서 input, textarea, select와 같은 폼 엘리먼트는 일반적으로 사용자의 입력을 기반으로 자신의 state를 관리하고 업데이트합니다. React에서는 변경할 수 있는 state가 일반적으로 컴포넌트의 state 속성에 유지되며 setState()에 의해 업데이트됩니다.
+
+```jsx
+class NameForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { value: "" };
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChange(event) {
+    this.setState({ value: event.target.value });
+  }
+
+  handleSubmit(event) {
+    alert("A name was submitted: " + this.state.value);
+    event.preventDefault();
+  }
+
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <label>
+          Name:
+          <input type="text" value={this.state.value} onChange={this.handleChange} />
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
+    );
+  }
+}
+```
+
+- value 어트리뷰트는 폼 엘리먼트에 설정되므로 표시되는 값은 항상 this.state.value가 되고 React state는 신뢰 가능한 단일 출처 (single source of truth)가 됩니다. React state를 업데이트하기 위해 모든 키 입력에서 handleChange가 동작하기 때문에 사용자가 입력할 때 보여지는 값이 업데이트됩니다.
+
+---
+
+#### <b>select 태그</b>
+
+```jsx
+class FlavorForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { value: "coconut" };
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChange(event) {
+    this.setState({ value: event.target.value });
+  }
+
+  handleSubmit(event) {
+    alert("Your favorite flavor is: " + this.state.value);
+    event.preventDefault();
+  }
+
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <label>
+          Pick your favorite flavor:
+          <select value={this.state.value} onChange={this.handleChange}>
+            <option value="grapefruit">Grapefruit</option>
+            <option value="lime">Lime</option>
+            <option value="coconut">Coconut</option>
+            <option value="mango">Mango</option>
+          </select>
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
+    );
+  }
+}
+```
+
+- selected 옵션이 있으므로 Coconut 옵션이 초기값이 되는 점을 주의해주세요. React에서는 selected 어트리뷰트를 사용하는 대신 최상단 select태그에 value 어트리뷰트를 사용합니다. 한 곳에서 업데이트만 하면되기 때문에 제어 컴포넌트에서 사용하기 더 편합니다. 아래는 예시입니다.
+
+---
+
+#### <b>다중 입력 제어하기</b>
+
+- 여러 input 엘리먼트를 제어해야할 때, 각 엘리먼트에 name 어트리뷰트를 추가하고 event.target.name 값을 통해 핸들러가 어떤 작업을 할 지 선택할 수 있게 해줍니다.
+
+```jsx
+class Reservation extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isGoing: true,
+      numberOfGuests: 2,
+    };
+
+    this.handleInputChange = this.handleInputChange.bind(this);
+  }
+
+  handleInputChange(event) {
+    const target = event.target;
+    const value = target.type === "checkbox" ? target.checked : target.value;
+    const name = target.name;
+
+    this.setState({
+      [name]: value,
+    });
+  }
+
+  render() {
+    return (
+      <form>
+        <label>
+          Is going:
+          <input name="isGoing" type="checkbox" checked={this.state.isGoing} onChange={this.handleInputChange} />
+        </label>
+        <br />
+        <label>
+          Number of guests:
+          <input name="numberOfGuests" type="number" value={this.state.numberOfGuests} onChange={this.handleInputChange} />
+        </label>
+      </form>
+    );
+  }
+}
+```
+
+---
+
+#### <b>ch8-n'리스트와 Key'</b>
+
+- 아래의 JavaScript map() 함수를 사용하여 numbers 배열을 반복 실행합니다. 각 항목에 대해 <li> 엘리먼트를 반환하고 엘리먼트 배열의 결과를 listItems에 저장합니다.
+
+```jsx
+const numbers = [1, 2, 3, 4, 5];
+const listItems = numbers.map(number => <li>{number}</li>);
+```
+
+- map함수로 prop값을 출력하고자 할 때는 , 각 props값마다 key값을 주어야합니다.
+
+```jsx
+function NumberList(props) {
+  const numbers = props.numbers;
+  const listItems = numbers.map(number => <li key={number.toString()}>{number}</li>);
+  return <ul>{listItems}</ul>;
+}
+
+const numbers = [1, 2, 3, 4, 5];
+ReactDOM.render(<NumberList numbers={numbers} />, document.getElementById("root"));
+```
+
+---
+
+#### <b>ch7-n'조건부 렌더링-컴포넌트가 렌더링하는것을 막기'</b>
+
+- 가끔 다른 컴포넌트에 의해 렌더링될 때 컴포넌트 자체를 숨기고 싶을 때가 있을 수 있습니다. 이때는 렌더링 결과를 출력하는 대신 null을 반환하면 해결할 수 있습니다.
+  - 네번째 앱은 warning이 발생하면 warning메시지를 출력하고, 청상이면 아무것도 출력하지 않는 앱입니다.
+  - WarningBanner컴포넌트는 메인 컴포넌트인 Page로 부터 props를 전달받아, false
+
+#### <b>ch7-n'조건부 렌더링-논리 && 연산자로 if를 인라인으로 표현하기'</b>
+
+- JSX 안에는 중괄호를 이용해서 표현식을 포함 할 수 있습니다. 그 안에 JavaScript의 논리 연산자 &&를 사용하면 쉽게 엘리먼트를 조건부로 넣을 수 있습니다.
+
+```jsx
+function Mailbox(props) {
+  const unreadMessages = props.unreadMessages;
+  return (
+    <div>
+      <h1>Hello!</h1>
+      {unreadMessages.length > 0 && <h2>You have {unreadMessages.length} unread messages.</h2>}
+    </div>
+  );
+}
+
+const messages = ["React", "Re: React", "Re:Re: React"];
+ReactDOM.render(<Mailbox unreadMessages={messages} />, document.getElementById("root"));
+```
+
+- JavaScript에서 true && expression은 항상 expression으로 평가되고 false && expression은 항상 false로 평가됩니다.
+
+- 따라서 && 뒤의 엘리먼트는 조건이 true일때 출력이 됩니다. 조건이 false라면 React는 무시하고 건너뜁니다.
+
+---
+
+#### <b>ch7-n'조건부 렌더링-엘리먼트 변수'</b>
+
+- 엘리먼트를 저장하기 위해 변수를 사용할 수 있습니다. 출력의 다른 부분은 변하지 않은 채로 컴포넌트의 일부를 조건부로 렌더링 할 수 있습니다.
+
+```jsx
+function LoginButton(props) {
+  return <button onClick={props.onClick}>Login</button>;
+}
+
+function LogoutButton(props) {
+  return <button onClick={props.onClick}>Logout</button>;
+}
+
+class LoginControl extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleLoginClick = this.handleLoginClick.bind(this);
+    this.handleLogoutClick = this.handleLogoutClick.bind(this);
+    this.state = { isLoggedIn: false };
+  }
+
+  handleLoginClick() {
+    this.setState({ isLoggedIn: true });
+  }
+
+  handleLogoutClick() {
+    this.setState({ isLoggedIn: false });
+  }
+
+  render() {
+    const isLoggedIn = this.state.isLoggedIn;
+    let button;
+    if (isLoggedIn) {
+      button = <LogoutButton onClick={this.handleLogoutClick} />;
+    } else {
+      button = <LoginButton onClick={this.handleLoginClick} />;
+    }
+
+    return (
+      <div>
+        <Greeting isLoggedIn={isLoggedIn} />
+        {button}
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(<LoginControl />, document.getElementById("root"));
+```
+
+- 이 컴포넌트는 현재 상태에 맞게 <LoginButton />이나 <LogoutButton />을 렌더링합니다. 또한 이전 예시에서의 <Greeting />도 함께 렌더링합니다.
+
+---
+
+#### <b>ch7-n'조건부 렌더링'</b>
+
+- React에서 조건부 렌더링은 JavaScript에서의 조건 처리와 같이 동작합니다. if 나 조건부 연산자 와 같은 JavaScript 연산자를 현재 상태를 나타내는 엘리먼트를 만드는 데에 사용하세요. 그러면 React는 현재 상태에 맞게 UI를 업데이트할 것입니다.
+
+```jsx
+function Greeting(props) {
+  const isLoggedIn = props.isLoggedIn;
+  if (isLoggedIn) {
+    return <UserGreeting />;
+  }
+  return <GuestGreeting />;
+}
+
+ReactDOM.render(
+  // Try changing to isLoggedIn={true}:
+  <Greeting isLoggedIn={false} />,
+  document.getElementById("root")
+);
+```
+
+- 이 예시는 isLoggedIn prop에 따라서 다른 인사말을 렌더링 합니다.
+
+---
+
+#### <b>ch6-n'이벤트 처리하기'</b>
+
+- React의 이벤트는 소문자 대신 캐멀 케이스(camelCase)를 사용합니다.
+- JSX를 사용하여 문자열이 아닌 함수로 이벤트 핸들러를 전달합니다.
+
+```jsx
+class Toggle extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { isToggleOn: true };
+
+    // 콜백에서 `this`가 작동하려면 아래와 같이 바인딩 해주어야 합니다.
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  handleClick() {
+    this.setState(prevState => ({
+      isToggleOn: !prevState.isToggleOn,
+    }));
+  }
+
+  render() {
+    return <button onClick={this.handleClick}>{this.state.isToggleOn ? "ON" : "OFF"}</button>;
+  }
+}
+
+ReactDOM.render(<Toggle />, document.getElementById("root"));
+```
+
+- JavaScript에서 클래스 메서드는 기본적으로 바인딩되어 있지 않습니다. this.handleClick을 바인딩하지 않고 onClick에 전달하였다면, 함수가 실제 호출될 때 this는 undefined가 됩니다.
+- onClick={this.handleClick}과 같이 뒤에 ()를 사용하지 않고 메서드를 참조할 경우, 해당 메서드를 바인딩 해야 합니다.
+
+---
+
 ## [12월 1일]
 
 ### 리액트 시작하기
-#### <b>ch3-n'State 업데이트는 병합됩니다'</b>
+
+#### <b>ch5-n'State 업데이트는 병합됩니다'</b>
+
 - setState()를 호출할 때 React는 제공한 객체를 현재 state로 병합합니다.
+
 ```jsx
  constructor(props) {
     super(props);
@@ -27,26 +532,35 @@ componentDidMount() {
     });
   }
 ```
+
 - 병합은 얕게 이루어지기 때문에 this.setState({comments})는 this.state.posts에 영향을 주진 않지만 this.state.comments는 완전히 대체됩니다.
+
 ---
 
-#### <b>ch3-n'State업데이트는 비동기적일 수도 있다'</b>
+#### <b>ch5-n'State업데이트는 비동기적일 수도 있다'</b>
+
 - React는 성능을 위해 여러 setState() 호출을 단일 업데이트로 한꺼번에 처리할 수 있습니다.
-this.props와 this.state가 비동기적으로 업데이트될 수 있기 때문에 다음 state를 계산할 때 해당 값에 의존해서는 안 됩니다.
+  this.props와 this.state가 비동기적으로 업데이트될 수 있기 때문에 다음 state를 계산할 때 해당 값에 의존해서는 안 됩니다.
+
 ---
-#### <b>ch3-n'State를 올바르게 사용하기'</b>
+
+#### <b>ch5-n'State를 올바르게 사용하기'</b>
+
 - 직접 State를 수정하지 마세요
+
 ```jsx
 // Wrong
-this.state.comment = 'Hello';
+this.state.comment = "Hello";
 // 위 코드는 컴포넌트를 다시 렌더링하지 않습니다.
 // Correct
-this.setState({comment: 'Hello'});
+this.setState({ comment: "Hello" });
 // 대신 setState를 사용합니다.
 ```
+
 ---
 
-#### <b>ch3-n'생명주기 메서드 추가하기'</b>
+#### <b>ch5-n'생명주기 메서드 추가하기'</b>
+
 ```jsx
 componentDidMount() {
   }
@@ -54,8 +568,10 @@ componentDidMount() {
   componentWillUnmount() {
   }
 ```
+
 - 이러한 메서드들은 “생명주기 메서드”라고 불립니다.  
-componentDidMount() 메서드는 컴포넌트 출력물이 DOM에 렌더링 된 후에 실행됩니다. 이 장소가 타이머를 설정하기에 좋은 장소입니다
+  componentDidMount() 메서드는 컴포넌트 출력물이 DOM에 렌더링 된 후에 실행됩니다. 이 장소가 타이머를 설정하기에 좋은 장소입니다
+
 ```jsx
   componentDidMount() {
     this.timerID = setInterval(
@@ -74,11 +590,16 @@ componentDidMount() 메서드는 컴포넌트 출력물이 DOM에 렌더링 된 
     });
   }
 ```
+
 - clock 컴포넌트가 매초 작동하도록 하는 tick()이라는 메서드를 구현했습니다. 이것은 컴포넌트
-로컬 state를 업데이트하기 위해 this.setState() 를 사용합니다.
+  로컬 state를 업데이트하기 위해 this.setState() 를 사용합니다.
+
 ---
+
 #### <b>ch3-n'클래스에 로컬 state 추가하기'</b>
+
 - render() 메서드 안에 있는 this.props.date를 this.state.date로 변경합니다.
+
 ```jsx
 class Clock extends React.Component {
   render() {
@@ -91,7 +612,9 @@ class Clock extends React.Component {
   }
 }
 ```
+
 - 초기 this.state를 지정하는 class constructor를 추가합니다.
+
 ```jsx
 class Clock extends React.Component {
   constructor(props) {
@@ -99,20 +622,23 @@ class Clock extends React.Component {
     this.state = {date: new Date()};
   }
 ```
+
 - <Clock /> 요소에서 date prop을 삭제합니다.
+
 ```jsx
-ReactDOM.render(
-  <Clock />,
-  document.getElementById('root')
-);
+ReactDOM.render(<Clock />, document.getElementById("root"));
 ```
+
 ---
+
 #### <b>ch3-n'함수에서 클래스로 변환하기'</b>
+
 - React.Component를 확장하는 동일한 이름의 ES6 class를 생성합니다.
 - render()라고 불리는 빈 메서드를 추가합니다.
 - 함수의 내용을 render() 메서드 안으로 옮깁니다.
 - render() 내용 안에 있는 props를 this.props로 변경합니다.
 - 남아있는 빈 함수 선언을 삭제합니다.
+
 ```jsx
 class Clock extends React.Component {
   render() {
@@ -125,22 +651,26 @@ class Clock extends React.Component {
   }
 }
 ```
+
 - Clock은 이제 함수가 아닌 클래스로 정의됩니다.
 - <Clock />을 렌더링하는 경우 Clock 클래스의 단일 인스턴스만 사용됩니다. 이것은 로컬 state와 생명주기 메서드와 같은 부가적인 기능을 사용할 수 있게 해줍니다.
+
 ---
 
 #### <b>ch2-n'props'는 읽기 전용이다</b>
+
 - 함수 컴포넌트나 클래스 컴포넌트 모두 컴포넌트의 자체 props를 수정해서는 안 됩니다. 다음 sum 함수를 살펴봅시다.
+
 ```jsx
 function sum(a, b) {
   return a + b;
 }
 ```
-- 이런 함수들은 순수 함수라고 호칭합니다. 입력값을 바꾸려 하지 않고 항상 동일한 입력값에 대해 동일한 결과를 반환하기 때문입니다.   
+
+- 이런 함수들은 순수 함수라고 호칭합니다. 입력값을 바꾸려 하지 않고 항상 동일한 입력값에 대해 동일한 결과를 반환하기 때문입니다.
 - 모든 React 컴포넌트는 자신의 props를 다룰 때 반드시 순수 함수처럼 동작해야 합니다.
+
 ---
-
-
 
 #### <b>ch2-n컴포넌트 추출</b>
 
@@ -164,7 +694,7 @@ function Comment(props) {
 - Comment 컴포넌트의 UserInfo부분에 ` <Avatar user={props.author} />`을 추가합니다
 - UserInfo 컴포넌트 또한 props값을 user로 수정하여 따로 추출합니다.
 - 추출한 UserInfo 값의 UserInfo클래스 내부에` <Avatar user={props.user} />`를 추가합니다.
-- Comment 컴포넌트의 UserInfo부분에 ` <UserInfo user={props.author} /> `을 추가합니다
+- Comment 컴포넌트의 UserInfo부분에 `<UserInfo user={props.author} />`을 추가합니다
 
 ---
 
@@ -225,6 +755,7 @@ class Welcome extends React.Component {
   }
 }
 ```
+
 ## [11월 24일]
 
 ### 리액트 시작하기
@@ -284,7 +815,6 @@ class Welcome extends React.Component {
   }
 }
 ```
-
 
 ## [11월 17일]
 
@@ -379,7 +909,7 @@ class TodoApp extends React.Component {
       text: this.state.text,
       id: Date.now(),
     };
-    this.setState((state) => ({
+    this.setState(state => ({
       items: state.items.concat(newItem),
       text: "",
     }));
@@ -390,7 +920,7 @@ class TodoList extends React.Component {
   render() {
     return (
       <ul>
-        {this.props.items.map((item) => (
+        {this.props.items.map(item => (
           <li key={item.id}>{item.text}</li>
         ))}
       </ul>
@@ -426,7 +956,7 @@ class Timer extends React.Component {
   }
 
   tick() {
-    this.setState((state) => ({
+    this.setState(state => ({
       seconds: state.seconds + 1,
     }));
   }
@@ -704,7 +1234,7 @@ function Movie({ id, year, title, summary, poster, genres }) {
         <h3 className="movie-title">{title}</h3>
         <h5 className="movie-year">{year}</h5>
         <ul className="movie-genres">
-          {genres.map((genre) => {
+          {genres.map(genre => {
             //genres값으로 받아온 것을 map함수를 사용해 li태그로 출력한다.
             return <li>{genre}</li>;
           })}
@@ -923,7 +1453,7 @@ class App extends Component {
   };
   add = () => {
     console.log("add");
-    this.setState((current) => ({ count: this.state.count + 1 }));
+    this.setState(current => ({ count: this.state.count + 1 }));
   };
 
   componentDidUpdate() {
@@ -1149,7 +1679,7 @@ function App() {
   return (
     <div className="App">
       <h1>Hello React!!!!</h1>
-      {foodLike.map((dish) => (
+      {foodLike.map(dish => (
         <Food name={dish.name} picture={dish.image} />
       ))};{/* Food 컴포넌트에 객체 데이터를 생성해 props값으로 전달한다. */}
     </div>
